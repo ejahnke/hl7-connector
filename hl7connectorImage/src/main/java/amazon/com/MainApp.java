@@ -8,7 +8,7 @@ public class MainApp {
 
     public static void main(String[] args) {
         MyRouteBuilder routeBuilder = new MyRouteBuilder();
-        routeBuilder.initializeRoute(System.getenv("HL7_PORT"),System.getenv("HL7_QUEUE"));
+        routeBuilder.initializeRoute(System.getenv("HL7_PORT"),System.getenv("HL7_QUEUE"),System.getenv("HL7_BUCKET"));
         CamelContext ctx = new DefaultCamelContext();
         try {
             ctx.addRoutes(routeBuilder);

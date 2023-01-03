@@ -2,13 +2,15 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as codecommit from 'aws-cdk-lib/aws-codecommit';
 import { CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines';
-import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Policy, PolicyStatement, ServicePrincipal, Effect } from 'aws-cdk-lib/aws-iam';
 //after initial deployment
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as ecs_patterns from "aws-cdk-lib/aws-ecs-patterns";
 import { CfnParameter } from 'aws-cdk-lib';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
+import * as s3 from "aws-cdk-lib/aws-s3";
+import { BlockPublicAccess, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 
 
 export class Hl7ConnectorStack extends cdk.Stack {
@@ -50,11 +52,28 @@ export class Hl7ConnectorStack extends cdk.Stack {
       encryption: QueueEncryption.KMS_MANAGED,
       queueName: "hl7Queue"
     });
+    
+    const blogBucket = new s3.Bucket(this, "my-blog-hl7-bucket", {
+      bucketName: "my-blog-hl7-bucket",
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      encryption: BucketEncryption.S3_MANAGED,
+      enforceSSL: true,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+    
+    blogBucket.addToResourcePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        principals: [new ServicePrincipal("ecs.amazonaws.com")],
+        actions: ["s3:*"],
+        resources: [`${blogBucket.bucketArn}/*`],
+      })
+    );
 
 
     const ecsTaskExecutionRole = new PolicyStatement({
-      actions: ['logs:CreateLogStream', 'logs:PutLogEvents', 'sqs:SendMessage'],
-      resources: [destQueue.queueArn], //restrict this later
+      actions: ['logs:CreateLogStream', 'logs:PutLogEvents', 'sqs:SendMessage', 's3:*'],
+      resources: [destQueue.queueArn, blogBucket.bucketArn, `${blogBucket.bucketArn}/*`], //restrict this later
     });
     
     const loadBalancedFargateServiceCustomImage = new ecs_patterns.NetworkLoadBalancedFargateService(this, "MyVpcFargateServiceCustomImage", {
@@ -62,7 +81,7 @@ export class Hl7ConnectorStack extends cdk.Stack {
       assignPublicIp: false, 
       cpu: 256, // Default is 256
       desiredCount: 2, // Default is 1
-      taskImageOptions: { image: ecs.ContainerImage.fromAsset("./hl7connectorImage"),containerPort:parseInt(this.node.tryGetContext('hl7Port')), environment: {HL7_PORT: this.node.tryGetContext('hl7Port'),HL7_QUEUE: destQueue.queueArn}   },
+      taskImageOptions: { image: ecs.ContainerImage.fromAsset("./hl7connectorImage"),containerPort:parseInt(this.node.tryGetContext('hl7Port')), environment: {HL7_PORT: this.node.tryGetContext('hl7Port'),HL7_QUEUE: destQueue.queueArn, HL7_BUCKET: blogBucket.bucketName }   },
       taskSubnets: {subnetGroupName: "privateSubnets"},
       listenerPort: parseInt(this.node.tryGetContext('hl7Port')),
       memoryLimitMiB: 512, // Default is 512
