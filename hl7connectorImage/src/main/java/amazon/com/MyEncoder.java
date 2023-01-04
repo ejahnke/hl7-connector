@@ -35,7 +35,7 @@ public class MyEncoder {
 		
 		uuid = UUID.randomUUID();
         uuidAsString = uuid.toString();
-        keyName = uuidAsString + System.currentTimeMillis();
+        keyName = uuidAsString + System.currentTimeMillis() + ".hl7";
         
         Region region = Region.CA_CENTRAL_1;
         S3Client s3 = S3Client.builder()

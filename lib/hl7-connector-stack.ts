@@ -61,14 +61,14 @@ export class Hl7ConnectorStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     
-    blogBucket.addToResourcePolicy(
+    /*blogBucket.addToResourcePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         principals: [new ServicePrincipal("ecs.amazonaws.com")],
         actions: ["s3:*"],
         resources: [`${blogBucket.bucketArn}/*`],
       })
-    );
+    );*/
 
 
     const ecsTaskExecutionRole = new PolicyStatement({
