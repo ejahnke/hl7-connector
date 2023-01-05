@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 public class MyEncoder {
 	
 	private UUID uuid;
@@ -28,14 +29,16 @@ public class MyEncoder {
 
 
 	public String EncodeBody(String body) {
+		/*System.out.println("START");
+		System.out.println(body);
+		System.out.println("END");
 		
-		/*System.out.println(body);
 		System.out.println(this.bucketName);
 		return "";*/
 		
 		uuid = UUID.randomUUID();
         uuidAsString = uuid.toString();
-        keyName = uuidAsString + System.currentTimeMillis() + ".hl7";
+        keyName = uuidAsString + System.currentTimeMillis() + "hl7";
         
         Region region = Region.CA_CENTRAL_1;
         S3Client s3 = S3Client.builder()
@@ -43,17 +46,56 @@ public class MyEncoder {
             .build();
 		
         String result = putS3Object(s3, bucketName, keyName, body);
-        //System.out.println("Tag information: "+result);
+        
         s3.close();
         
-		//System.out.println("Invoked EncodeBody by route");
-		//return Base64.getEncoder().encodeToString(body.getBytes());
+
+		String cleanedBody = body.replaceAll("[\\x0B]", "").replaceAll("[\\x1C]", "");
+        String[] msh  = null;
+		String[] segments = cleanedBody.split("[\\x0D]");
+		
+        for (int x=0; x<segments.length; x++) {
+        	String[] segmentElements = segments[x].split("\\|");
+        	
+        	if (segmentElements[0].equals("MSH")) {
+        		msh = segmentElements;
+        		break;
+        	}
+        }
+        
+        MSHSegment mshSegment = new MSHSegment(
+        		msh[1],
+        		msh[2],
+        		msh[3],
+        		msh[4],
+        		msh[5],
+        		msh[6],
+        		msh[7],
+        		msh[8],
+        		msh[9],
+        		msh[10],
+        		msh[11]
+        );
+
+		
+		
+        
         
         String message;
 		JSONObject json = new JSONObject();
 		
 		try {
-			json.put("date", System.currentTimeMillis());
+			json.put("EncodingCharacters", mshSegment.getEncodingCharacters() );
+			json.put("SendingApplication", mshSegment.getSendingApplication() );
+			json.put("SendingFacility", mshSegment.getSendingFacility() );
+			json.put("ReceivingApplication", mshSegment.getReceivingApplication() );
+			json.put("ReceivingFacility", mshSegment.getReceivingFacility()  );
+			json.put("DateTimeOfMessage", mshSegment.getDateTimeOfMessage() );
+			json.put("Security", mshSegment.getSecurity() );
+			json.put("MessageType", mshSegment.getMessageType() );
+			json.put("MessageControlId",mshSegment.getMessageControlId()  );
+			json.put("ProcessingId", mshSegment.getProcessingId() );
+			json.put("VersionId", mshSegment.getVersionId() );
 			json.put("msgUrl",bucketName + "/" + keyName);
 			
 		} catch (JSONException e) {
@@ -62,7 +104,7 @@ public class MyEncoder {
 		}
 		
 		message = json.toString();
-        
+        System.out.println(message);
 		return message;
 	}
 
