@@ -53,8 +53,8 @@ export class Hl7ConnectorStack extends cdk.Stack {
       queueName: "hl7Queue"
     });
     
-    const blogBucket = new s3.Bucket(this, "my-blog-hl7-bucket", {
-      bucketName: "my-blog-hl7-bucket",
+    const blogBucket = new s3.Bucket(this, "my-connector-hl7-bucket", {
+      bucketName: "my-connector-hl7-bucket",
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: BucketEncryption.S3_MANAGED,
       enforceSSL: true,
