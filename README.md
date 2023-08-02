@@ -1,7 +1,9 @@
 # Welcome to your HL7 Connector CDK TypeScript project
 
 ## Solution Overview
-![image](https://github.com/ejahnke/hl7-connector/assets/94935251/7710fd06-b72b-409c-acaa-b6f063601353)
+
+![image](https://github.com/ejahnke/hl7-connector/assets/94935251/feb34460-4e30-49bd-a1ca-5096cee965ad)
+
 
 This CDK stack deploys the above components into a new VPC in the target account.
 
