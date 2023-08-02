@@ -1,3 +1,13 @@
+//Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//SPDX-License-Identifier: Apache-2.0
+
+/*
+Purpose
+
+The Hl7ConnectorStack class is responsible for the creation of an HL7v2 ingestion mechanism based on Apache Camel, Network Load Balancers and AWS Fargate
+
+*/
+
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as codecommit from 'aws-cdk-lib/aws-codecommit';
