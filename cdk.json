@@ -18,6 +18,7 @@
   },
   "context": {
     "hl7Port":"18000",
+    "sourceIP":"174.1.101.0/32",
     "@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": true,
     "@aws-cdk/core:stackRelativeExports": true,
     "@aws-cdk/aws-rds:lowercaseDbIdentifier": true,
