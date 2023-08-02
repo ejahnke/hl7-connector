@@ -13,6 +13,10 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `cdk diff`        compare deployed stack with current state
 * `cdk synth`       emits the synthesized CloudFormation template
 
+![image](https://github.com/ejahnke/hl7-connector/assets/94935251/7710fd06-b72b-409c-acaa-b6f063601353)
+
+
+
 ## Deployment steps
 
 1. Launch an AWS Cloud9 m5.large environment in the ca-central-1 region with default settings
