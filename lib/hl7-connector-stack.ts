@@ -17,7 +17,7 @@ export class Hl7ConnectorStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
     
-    const blogVpc = new ec2.Vpc(this, "blogVPC", {
+    const hl7Vpc = new ec2.Vpc(this, "hl7Vpc", {
       cidr: "10.0.0.0/16",
       maxAzs: 2,
       natGateways: 1,
@@ -36,17 +36,9 @@ export class Hl7ConnectorStack extends cdk.Stack {
     });
     
        
-    const clusterCustomImage = new ecs.Cluster(this, "MyBlogClusterCustomImage", {
-      vpc: blogVpc
+    const clusterCustomImage = new ecs.Cluster(this, "MyHl7ClusterCustomImage", {
+      vpc: hl7Vpc
     });
-    
-    // const mySG = new ec2.SecurityGroup(this, `ecs-security-group`, {
-    // vpc: blogVpc,
-    // allowAllOutbound: true,
-    // description: 'CDK Security Group'
-    // });
-    
-    // mySG.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(17000), 'HL7 from anywhere');
     
     const destQueue = new Queue (this, "hl7Queue",{
       encryption: QueueEncryption.KMS_MANAGED,
@@ -60,15 +52,6 @@ export class Hl7ConnectorStack extends cdk.Stack {
       enforceSSL: true,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
-    
-    /*blogBucket.addToResourcePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        principals: [new ServicePrincipal("ecs.amazonaws.com")],
-        actions: ["s3:*"],
-        resources: [`${blogBucket.bucketArn}/*`],
-      })
-    );*/
 
 
     const ecsTaskExecutionRole = new PolicyStatement({
@@ -87,9 +70,7 @@ export class Hl7ConnectorStack extends cdk.Stack {
       memoryLimitMiB: 512, // Default is 512
       publicLoadBalancer: true // Default is true
     });
-    
-    //clusterCustomImage.connections.addSecurityGroup
-    
+      
     loadBalancedFargateServiceCustomImage.taskDefinition.taskRole.attachInlinePolicy(
       new Policy(this, 'ecs-policy', {
         statements: [ecsTaskExecutionRole],
@@ -112,12 +93,6 @@ export class Hl7ConnectorStack extends cdk.Stack {
     
     loadBalancedFargateServiceCustomImage.service.connections.securityGroups[0].addIngressRule(ec2.Peer.ipv4(this.node.tryGetContext('sourceIP')), ec2.Port.tcp(parseInt(this.node.tryGetContext('hl7Port'))), 'HL7 from Home');
     loadBalancedFargateServiceCustomImage.service.connections.securityGroups[0].addIngressRule(ec2.Peer.ipv4("10.0.0.0/16"), ec2.Port.tcp(parseInt(this.node.tryGetContext('hl7Port'))), 'HL7 from VPC');
-    
-    
-    // new cdk.CfnOutput(this, "ecsServiceSecurityGroup", {
-    //   value: loadBalancedFargateServiceCustomImage.service.connections.securityGroups[0].securityGroupId,
-    //   exportName: "ecsServiceSecurityGroup",
-    // });
     
   }
 }
