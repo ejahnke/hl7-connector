@@ -27,11 +27,13 @@ cd hl7-connector
 ```
 npm install aws-cdk-lib
 ```
-4. bootstrap the AWS account for CDK deployments
+4. If required, modify the HL7 listening port value under hl7Port in cdk.json
+   
+5. bootstrap the AWS account for CDK deployments
 ```
 cdk bootstrap
 ```
-5. deploy the CDK stack
+6. deploy the CDK stack
 ```
 cdk deploy
 ```
