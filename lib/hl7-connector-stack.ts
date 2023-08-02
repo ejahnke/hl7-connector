@@ -110,7 +110,7 @@ export class Hl7ConnectorStack extends cdk.Stack {
     });
     
     
-    loadBalancedFargateServiceCustomImage.service.connections.securityGroups[0].addIngressRule(ec2.Peer.ipv4("174.1.101.0/32"), ec2.Port.tcp(parseInt(this.node.tryGetContext('hl7Port'))), 'HL7 from Home');
+    loadBalancedFargateServiceCustomImage.service.connections.securityGroups[0].addIngressRule(ec2.Peer.ipv4(this.node.tryGetContext('sourceIP')), ec2.Port.tcp(parseInt(this.node.tryGetContext('hl7Port'))), 'HL7 from Home');
     loadBalancedFargateServiceCustomImage.service.connections.securityGroups[0].addIngressRule(ec2.Peer.ipv4("10.0.0.0/16"), ec2.Port.tcp(parseInt(this.node.tryGetContext('hl7Port'))), 'HL7 from VPC');
     
     
