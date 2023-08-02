@@ -4,7 +4,9 @@
 /*
 Purpose
 
-The Hl7ConnectorStack class is responsible for the creation of an HL7v2 ingestion mechanism based on Apache Camel, Network Load Balancers and AWS Fargate
+The Hl7ConnectorStack class is responsible for the creation of an HL7v2 ingestion mechanism based on Apache Camel, Network Load Balancers and AWS Fargate.
+
+This code is NOT production ready
 
 */
 
