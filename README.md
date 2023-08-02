@@ -27,7 +27,7 @@ cd hl7-connector
 npm install aws-cdk-lib
 ```
 4. If required, modify the HL7 listening port value under hl7Port in cdk.json
-5. You MUST configure the IP address of the sending application in the lib/hl7-connector-stack.ts file (line 113). This will allow connections from the source IP into the AWS Fargate containers
+5. You MUST configure the IP address of the sending application in cdk.json under the property sourceIP (e.g. 172.16.32.0/32). This will allow connections from the source IP into the AWS Fargate containers
    
 6. bootstrap the AWS account for CDK deployments
 ```
