@@ -57,7 +57,7 @@ export class Hl7ConnectorStack extends cdk.Stack {
       queueName: "hl7Queue"
     });
     
-    const blogBucket = new s3.Bucket(this, "my-connector-hl7-bucket", {
+    const hl7Bucket = new s3.Bucket(this, "my-connector-hl7-bucket", {
       bucketName: "my-connector-hl7-bucket",
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: BucketEncryption.S3_MANAGED,
@@ -68,7 +68,7 @@ export class Hl7ConnectorStack extends cdk.Stack {
 
     const ecsTaskExecutionRole = new PolicyStatement({
       actions: ['logs:CreateLogStream', 'logs:PutLogEvents', 'sqs:SendMessage', 's3:*'],
-      resources: [destQueue.queueArn, blogBucket.bucketArn, `${blogBucket.bucketArn}/*`], //restrict this later
+      resources: [destQueue.queueArn, hl7Bucket.bucketArn, `${hl7Bucket.bucketArn}/*`], //restrict this later
     });
     
     const loadBalancedFargateServiceCustomImage = new ecs_patterns.NetworkLoadBalancedFargateService(this, "MyVpcFargateServiceCustomImage", {
@@ -76,7 +76,7 @@ export class Hl7ConnectorStack extends cdk.Stack {
       assignPublicIp: false, 
       cpu: 256, // Default is 256
       desiredCount: 2, // Default is 1
-      taskImageOptions: { image: ecs.ContainerImage.fromAsset("./hl7connectorImage"),containerPort:parseInt(this.node.tryGetContext('hl7Port')), environment: {HL7_PORT: this.node.tryGetContext('hl7Port'),HL7_QUEUE: destQueue.queueArn, HL7_BUCKET: blogBucket.bucketName }   },
+      taskImageOptions: { image: ecs.ContainerImage.fromAsset("./hl7connectorImage"),containerPort:parseInt(this.node.tryGetContext('hl7Port')), environment: {HL7_PORT: this.node.tryGetContext('hl7Port'),HL7_QUEUE: destQueue.queueArn, HL7_BUCKET: hl7Bucket.bucketName }   },
       taskSubnets: {subnetGroupName: "privateSubnets"},
       listenerPort: parseInt(this.node.tryGetContext('hl7Port')),
       memoryLimitMiB: 512, // Default is 512
