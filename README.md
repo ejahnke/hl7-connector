@@ -9,10 +9,7 @@ This CDK stack deploys the above components into a new VPC in the target account
 2. An AWS Fargate cluster running Apache Camel will be deployed for message parsing and handling
 3. An Amazon S3 bucket is created by the CDK to store message payload
 4. An Amazon SQS queue is created to store message and event metadata
-5. Once messages are received, they will be forwarded to the AWS Fargate containers running Apache Camel. They will:
-      a. parse and acknowledge messages
-      b. store the full message payload in Amazon S3
-      c. store message and event metadata in AWS SQS
+5. Once messages are received, they will be forwarded to the AWS Fargate containers running Apache Camel. They will: parse and acknowledge messages, store the full message payload in Amazon S3 and store message and event metadata in AWS SQS
 6. Consumers will be able to pop messages from the AWS SQS queue and reference the full message payload in Amazon S3
 
 ## Deployment steps
