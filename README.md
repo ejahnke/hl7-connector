@@ -1,8 +1,4 @@
-# Welcome to your CDK TypeScript project
-
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+# Welcome to your HL7 Connector CDK TypeScript project
 
 ## Solution Overview
 ![image](https://github.com/ejahnke/hl7-connector/assets/94935251/7710fd06-b72b-409c-acaa-b6f063601353)
