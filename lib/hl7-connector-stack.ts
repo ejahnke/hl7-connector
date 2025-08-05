@@ -91,8 +91,7 @@ export class Hl7ConnectorStack extends cdk.Stack {
       runtimePlatform: {
         operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
         cpuArchitecture: ecs.CpuArchitecture.X86_64,
-      },
-      securityGroups: [hl7SecurityGroup]
+      }
     });
       
     loadBalancedFargateServiceCustomImage.taskDefinition.taskRole.attachInlinePolicy(
@@ -105,6 +104,8 @@ export class Hl7ConnectorStack extends cdk.Stack {
       minCapacity: 1,
       maxCapacity: 20,
     });
+
+    
     
     scalableTargetCustomImage.scaleOnCpuUtilization('CpuScaling', {
       targetUtilizationPercent: 50,
@@ -118,5 +119,7 @@ export class Hl7ConnectorStack extends cdk.Stack {
     loadBalancedFargateServiceCustomImage.service.connections.securityGroups[0].addIngressRule(ec2.Peer.ipv4(this.node.tryGetContext('sourceIP')), ec2.Port.tcp(parseInt(this.node.tryGetContext('hl7Port'))), 'HL7 from Home');
     loadBalancedFargateServiceCustomImage.service.connections.securityGroups[0].addIngressRule(ec2.Peer.ipv4("10.0.0.0/16"), ec2.Port.tcp(parseInt(this.node.tryGetContext('hl7Port'))), 'HL7 from VPC');
     
+    const cfnLoadBalancer = loadBalancedFargateServiceCustomImage.loadBalancer.node.defaultChild as any;
+    cfnLoadBalancer.addPropertyOverride('SecurityGroups', [hl7SecurityGroup.securityGroupId]);
   }
 }

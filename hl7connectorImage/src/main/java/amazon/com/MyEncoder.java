@@ -53,14 +53,19 @@ public class MyEncoder {
 		String cleanedBody = body.replaceAll("[\\x0B]", "").replaceAll("[\\x1C]", "");
         String[] msh  = null;
 		String[] segments = cleanedBody.split("[\\x0D]");
+
+		String[] pid = null;
 		
         for (int x=0; x<segments.length; x++) {
         	String[] segmentElements = segments[x].split("\\|");
         	
         	if (segmentElements[0].equals("MSH")) {
         		msh = segmentElements;
-        		break;
+        		//break;
         	}
+			if (segmentElements[0].equals("PID")) {
+				pid = segmentElements;
+			}
         }
         
         MSHSegment mshSegment = new MSHSegment(
@@ -76,6 +81,23 @@ public class MyEncoder {
         		msh[10],
         		msh[11]
         );
+
+		PIDSegment pidSegment = new PIDSegment(
+				pid[2],
+				pid[3],
+				pid[5],
+				pid[7],
+				pid[8],
+				pid[10],
+				pid[11],
+				pid[15],
+				pid[18],
+				pid[19],
+				pid[29],
+				pid[30]
+		);
+
+
 
 		
 		
@@ -96,6 +118,21 @@ public class MyEncoder {
 			json.put("MessageControlId",mshSegment.getMessageControlId()  );
 			json.put("ProcessingId", mshSegment.getProcessingId() );
 			json.put("VersionId", mshSegment.getVersionId() );
+
+			json.put("PatientID", pidSegment.getPatientID());
+			json.put("PatientIDList", pidSegment.getPatientIDList());
+			json.put("PatientName", pidSegment.getPatientName());
+			json.put("DateOfBirth", pidSegment.getDateOfBirth());
+			json.put("AdministrativeSex", pidSegment.getAdministrativeSex());
+			json.put("Race", pidSegment.getRace());
+			json.put("PatientAddress", pidSegment.getPatientAddress());
+			json.put("PrimaryLanguage", pidSegment.getPrimaryLanguage());
+			json.put("PatientAccountNumber", pidSegment.getPatientAccountNumber());
+			json.put("PatientHealthNumber", pidSegment.getPatientHealthNumber());
+			json.put("DeathDateTime", pidSegment.getDeathDateTime());
+			json.put("DeathIndicator", pidSegment.getDeathIndicator());
+
+					
 			json.put("msgUrl",bucketName + "/" + keyName);
 			
 		} catch (JSONException e) {

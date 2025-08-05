@@ -6,3 +6,7 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+hl7connectorImage/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+hl7connectorImage/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+hl7connectorImage/target/maven-archiver/pom.properties
+hl7connectorImage/target/hl7-connector-0.0.1-SNAPSHOT.jar
