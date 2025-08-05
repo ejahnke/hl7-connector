@@ -104,7 +104,7 @@ public class MyEncoder {
 		}
 		
 		message = json.toString();
-        System.out.println(message);
+        System.out.println("HL7 Message" + message);
 		return message;
 	}
 

@@ -73,12 +73,16 @@ export class Hl7ConnectorStack extends cdk.Stack {
       cluster: clusterCustomImage, // Required
       assignPublicIp: false, 
       cpu: 256, // Default is 256
-      desiredCount: 2, // Default is 1
+      desiredCount: 1, // Default is 1
       taskImageOptions: { image: ecs.ContainerImage.fromAsset("./hl7connectorImage"),containerPort:parseInt(this.node.tryGetContext('hl7Port')), environment: {HL7_PORT: this.node.tryGetContext('hl7Port'),HL7_QUEUE: destQueue.queueArn, HL7_BUCKET: hl7Bucket.bucketName }   },
       taskSubnets: {subnetGroupName: "privateSubnets"},
       listenerPort: parseInt(this.node.tryGetContext('hl7Port')),
       memoryLimitMiB: 512, // Default is 512
-      publicLoadBalancer: true // Default is true
+      publicLoadBalancer: true, // Default is true
+      runtimePlatform: {
+        operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
+        cpuArchitecture: ecs.CpuArchitecture.X86_64,
+      }
     });
       
     loadBalancedFargateServiceCustomImage.taskDefinition.taskRole.attachInlinePolicy(
