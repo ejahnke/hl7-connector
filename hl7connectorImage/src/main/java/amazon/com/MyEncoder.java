@@ -58,6 +58,8 @@ public class MyEncoder {
 		
         for (int x=0; x<segments.length; x++) {
         	String[] segmentElements = segments[x].split("\\|");
+
+			System.out.println("Segment: " + segmentElements.toString());
         	
         	if (segmentElements[0].equals("MSH")) {
         		msh = segmentElements;
@@ -65,6 +67,24 @@ public class MyEncoder {
         	}
 			if (segmentElements[0].equals("PID")) {
 				pid = segmentElements;
+				try {
+					System.out.println("PID: " + pid.toString());
+					System.out.println("PID: " + pid[1]);
+					System.out.println("PID: " + pid[2]);
+					System.out.println("PID: " + pid[3]);
+					System.out.println("PID: " + pid[5]);
+					System.out.println("PID: " + pid[7]);
+					System.out.println("PID: " + pid[8]);
+					System.out.println("PID: " + pid[10]);
+					System.out.println("PID: " + pid[11]);
+					System.out.println("PID: " + pid[15]);
+					System.out.println("PID: " + pid[18]);
+					System.out.println("PID: " + pid[19]);
+					System.out.println("PID: " + pid[29]);
+					System.out.println("PID: " + pid[30]);
+				} catch (Exception e) {
+					System.out.println("Error: " + e.getMessage());
+				}
 			}
         }
         
