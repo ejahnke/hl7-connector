@@ -69,9 +69,18 @@ export class Hl7ConnectorStack extends cdk.Stack {
       resources: [destQueue.queueArn, hl7Bucket.bucketArn, `${hl7Bucket.bucketArn}/*`], //restrict this later
     });
     
+    const hl7SecurityGroup = new ec2.SecurityGroup(this, 'hl7SecurityGroup', {
+      vpc: hl7Vpc,
+      description: 'Security group for HL7 connector',
+      allowAllOutbound: true,
+    });
+    
+    hl7SecurityGroup.addIngressRule(ec2.Peer.ipv4(this.node.tryGetContext('sourceIP')), ec2.Port.tcp(parseInt(this.node.tryGetContext('hl7Port'))), 'HL7 from source');
+    hl7SecurityGroup.addIngressRule(ec2.Peer.ipv4("10.0.0.0/16"), ec2.Port.tcp(parseInt(this.node.tryGetContext('hl7Port'))), 'HL7 from VPC');
+    
     const loadBalancedFargateServiceCustomImage = new ecs_patterns.NetworkLoadBalancedFargateService(this, "MyVpcFargateServiceCustomImage", {
       cluster: clusterCustomImage, // Required
-      assignPublicIp: false, 
+      assignPublicIp: true,  //change this post POC
       cpu: 256, // Default is 256
       desiredCount: 1, // Default is 1
       taskImageOptions: { image: ecs.ContainerImage.fromAsset("./hl7connectorImage"),containerPort:parseInt(this.node.tryGetContext('hl7Port')), environment: {HL7_PORT: this.node.tryGetContext('hl7Port'),HL7_QUEUE: destQueue.queueArn, HL7_BUCKET: hl7Bucket.bucketName }   },
@@ -82,7 +91,8 @@ export class Hl7ConnectorStack extends cdk.Stack {
       runtimePlatform: {
         operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
         cpuArchitecture: ecs.CpuArchitecture.X86_64,
-      }
+      },
+      securityGroups: [hl7SecurityGroup]
     });
       
     loadBalancedFargateServiceCustomImage.taskDefinition.taskRole.attachInlinePolicy(
