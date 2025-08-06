@@ -57,9 +57,10 @@ public class MyEncoder {
 		String[] pid = null;
 		
         for (int x=0; x<segments.length; x++) {
-        	String[] segmentElements = segments[x].split("\\|");
+        	String[] segmentElements = segments[x].split("\\|", -1);
 
-			System.out.println("Segment: " + segmentElements.toString());
+			System.out.println("Segment " + segmentElements[0] + " size: " + segmentElements.length);
+			System.out.println("raw segment: " +  segments[x]);
         	
         	if (segmentElements[0].equals("MSH")) {
         		msh = segmentElements;
@@ -67,24 +68,6 @@ public class MyEncoder {
         	}
 			if (segmentElements[0].equals("PID")) {
 				pid = segmentElements;
-				try {
-					System.out.println("PID: " + pid.toString());
-					System.out.println("PID: " + pid[1]);
-					System.out.println("PID: " + pid[2]);
-					System.out.println("PID: " + pid[3]);
-					System.out.println("PID: " + pid[5]);
-					System.out.println("PID: " + pid[7]);
-					System.out.println("PID: " + pid[8]);
-					System.out.println("PID: " + pid[10]);
-					System.out.println("PID: " + pid[11]);
-					System.out.println("PID: " + pid[15]);
-					System.out.println("PID: " + pid[18]);
-					System.out.println("PID: " + pid[19]);
-					System.out.println("PID: " + pid[29]);
-					System.out.println("PID: " + pid[30]);
-				} catch (Exception e) {
-					System.out.println("Error: " + e.getMessage());
-				}
 			}
         }
         
@@ -103,18 +86,18 @@ public class MyEncoder {
         );
 
 		PIDSegment pidSegment = new PIDSegment(
+				pid[8],
+				pid[7],
+				pid[29],
+				pid[30],
+				pid[18],
+				pid[11],
+				pid[19],
 				pid[2],
 				pid[3],
 				pid[5],
-				pid[7],
-				pid[8],
-				pid[10],
-				pid[11],
 				pid[15],
-				pid[18],
-				pid[19],
-				pid[29],
-				pid[30]
+				pid[10]
 		);
 
 
