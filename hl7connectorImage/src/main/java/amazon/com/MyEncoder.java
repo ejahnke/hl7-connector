@@ -115,28 +115,28 @@ public class MyEncoder {
 				evn[1],
 				evn[5]
 		);
-
+	// generated data should be captured as burden on producers (powerpoint)
 		PV1Segment pv1Segment = new PV1Segment(
-				pv1[4],
-				pv1[44],
-				"",
-				pv1[17],
-				pv1[3],
-				pv1[7],
-				pv1[9],
-				"",
+				pv1[4], //admissionType
+				pv1[44], //Admission Date Time
+				"", //Initiatl assessment Time
+				pv1[17], //admit provider
+				pv1[3], //assigned location
+				pv1[7], //attending provider
+				pv1[9], //consulting provider
+				"", //left ED date time
 				"", //dischargeDateTime
-				pv1[36],
-				pv1[52],
-				pv1[10],
-				pv1[41],
-				pv1[18],
-				"",
-				"",
-				"",
-				"",
-				"",
-				pv1[4]
+				pv1[36], // discharge disposition
+				pv1[52], //PCP
+				pv1[10], //hospital service
+				pv1[41], //patient status
+				pv1[18], //patient type
+				"", //reg date
+				"", //unit transf date
+				"", //triage datetime
+				"", //clinical dec unit in
+				"", // cli dec unit out
+				pv1[4] //triage level
 		);
        
 	   	//generate synthetic dates
@@ -180,6 +180,29 @@ public class MyEncoder {
 			json.put("DeathIndicator", pidSegment.getDeathIndicator());
 			json.put("LastUpdateTime", pidSegment.getLastUpdateTime());
 					
+			//PV1
+			json.put("AdmissionType", pv1Segment.getAdmissionType());
+			json.put("AdmissionDateTime", pv1Segment.getAdmissionDateTime());
+			json.put("InitialAssessmentDateTime", pv1Segment.getInitialAssessmentDateTime());
+			json.put("RegistrationDateTime", pv1Segment.getRegistrationDateTime());
+			json.put("TriageDateTime", pv1Segment.getTriageDateTime());
+			json.put("ClinicalDecisionUnitDateTimeIn", pv1Segment.getClinicalDecisionUnitDateTimeIn());	
+			json.put("ClinicalDecisionUnitDateTimeOut", pv1Segment.getClinicalDecisionUnitDateTimeOut());	
+			json.put("UnitTransferDateTime", pv1Segment.getUnitTransferDateTime());
+			json.put("DischargeDateTime", pv1Segment.getDischargeDateTime());
+			json.put("LeftEDDateTime", pv1Segment.getLeftedDateTime());
+			json.put("DischargeDisposition", pv1Segment.getDischargeDisposition());
+			json.put("PrimaryCareProvider", pv1Segment.getPrimaryCareProvider());
+			json.put("AssignedPatientLocation", pv1Segment.getAssignedPatientLocation());
+			json.put("AttendingProvider", pv1Segment.getAttendingProvider());
+			json.put("ConsultingProvider", pv1Segment.getConsultingProvider());
+			json.put("HospitalService", pv1Segment.getHospitalService());
+			json.put("PatientStatus", pv1Segment.getPatientStatus());
+			json.put("PatientType", pv1Segment.getPatientType());
+			json.put("TriageLevel", pv1Segment.getTriageLevel());
+			json.put("AdmittingProvider",pv1Segment.getAdmittingProvider());
+			
+
 			json.put("msgUrl",bucketName + "/" + keyName);
 
 			//EVN
