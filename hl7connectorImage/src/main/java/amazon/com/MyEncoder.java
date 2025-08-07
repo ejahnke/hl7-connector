@@ -4,6 +4,9 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Random;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -55,6 +58,8 @@ public class MyEncoder {
 		String[] segments = cleanedBody.split("[\\x0D]");
 
 		String[] pid = null;
+		String[] evn = null;
+		String[] pv1 = null;
 		
         for (int x=0; x<segments.length; x++) {
         	String[] segmentElements = segments[x].split("\\|", -1);
@@ -68,7 +73,11 @@ public class MyEncoder {
         	}
 			if (segmentElements[0].equals("PID")) {
 				pid = segmentElements;
-			}
+			}if (segmentElements[0].equals("EVN")) {
+				evn = segmentElements;
+			} if (segmentElements[0].equals("PV1")) {
+				pv1 = segmentElements;
+			} 
         }
         
         MSHSegment mshSegment = new MSHSegment(
@@ -101,11 +110,45 @@ public class MyEncoder {
 				pid[33]
 		);
 
+		EVNSegment evnSegment = new EVNSegment(
+				evn[2],
+				evn[1],
+				evn[5]
+		);
 
-
+		PV1Segment pv1Segment = new PV1Segment(
+				pv1[4],
+				pv1[44],
+				"",
+				pv1[17],
+				pv1[3],
+				pv1[7],
+				pv1[9],
+				"",
+				"", //dischargeDateTime
+				pv1[36],
+				pv1[52],
+				pv1[10],
+				pv1[41],
+				pv1[18],
+				"",
+				"",
+				"",
+				"",
+				"",
+				pv1[4]
+		);
+       
+	   	//generate synthetic dates
 		
-		
-        
+		pv1Segment.setInitialAssessmentDateTime(generateInitialAssessmentTime(pv1Segment.getAdmissionDateTime()));		
+		pv1Segment.setRegistrationDateTime(generateRegistrationDateTime(pv1Segment.getInitialAssessmentDateTime()));
+		pv1Segment.setTriageDateTime(generateTriageDateTime(pv1Segment.getRegistrationDateTime()));
+		pv1Segment.setClinicalDecisionUnitDateTimeIn(pv1Segment.getTriageDateTime());
+		pv1Segment.setClinicalDecisionUnitDateTimeOut(generateClinicalDecisionUnitDateTimeOut(pv1Segment.getClinicalDecisionUnitDateTimeIn()));
+		pv1Segment.setUnitTransferDateTime(generateUnitTransferDateTime(pv1Segment.getClinicalDecisionUnitDateTimeOut()));
+		pv1Segment.setLeftedDateTime(generateLeftEDDateTime(pv1Segment.getUnitTransferDateTime()));
+		pv1Segment.setDischargeDateTime(generateDischargeDateTime(pv1Segment.getLeftedDateTime()));
         
         String message;
 		JSONObject json = new JSONObject();
@@ -138,6 +181,12 @@ public class MyEncoder {
 			json.put("LastUpdateTime", pidSegment.getLastUpdateTime());
 					
 			json.put("msgUrl",bucketName + "/" + keyName);
+
+			//EVN
+
+			json.put("CoderNumber", evnSegment.getOperatorId());
+
+			//PV1
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -170,6 +219,69 @@ public class MyEncoder {
         }
 
         return "";
+    }
+
+    private String generateInitialAssessmentTime(String inputDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        LocalDateTime dateTime = LocalDateTime.parse(inputDateTime, formatter);
+        Random random = new Random();
+        int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
+        LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
+        return newDateTime.format(formatter);
+    }
+
+    private String generateRegistrationDateTime(String inputDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        LocalDateTime dateTime = LocalDateTime.parse(inputDateTime, formatter);
+        Random random = new Random();
+        int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
+        LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
+        return newDateTime.format(formatter);
+    }
+
+    private String generateTriageDateTime(String inputDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        LocalDateTime dateTime = LocalDateTime.parse(inputDateTime, formatter);
+        Random random = new Random();
+        int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
+        LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
+        return newDateTime.format(formatter);
+    }
+
+    private String generateClinicalDecisionUnitDateTimeOut(String inputDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        LocalDateTime dateTime = LocalDateTime.parse(inputDateTime, formatter);
+        Random random = new Random();
+        int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
+        LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
+        return newDateTime.format(formatter);
+    }
+
+    private String generateUnitTransferDateTime(String inputDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        LocalDateTime dateTime = LocalDateTime.parse(inputDateTime, formatter);
+        Random random = new Random();
+        int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
+        LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
+        return newDateTime.format(formatter);
+    }
+
+    private String generateLeftEDDateTime(String inputDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        LocalDateTime dateTime = LocalDateTime.parse(inputDateTime, formatter);
+        Random random = new Random();
+        int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
+        LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
+        return newDateTime.format(formatter);
+    }
+
+    private String generateDischargeDateTime(String inputDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        LocalDateTime dateTime = LocalDateTime.parse(inputDateTime, formatter);
+        Random random = new Random();
+        int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
+        LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
+        return newDateTime.format(formatter);
     }
 
 }
