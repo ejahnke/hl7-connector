@@ -14,9 +14,9 @@ public class PIDSegment {
 	private String PatientHealthNumber;		
 	private String DeathDateTime;
     private String DeathIndicator;
-    private String LastUpdateDateTime;
+    private String LastUpdateTime;
 
-    public PIDSegment(String AdministrativeSex, String DateOfBirth, String DeathDateTime, String DeathIndicator, String PatientAccountNumber, String PatientAddress, String PatientHealthNumber, String PatientID, String PatientIDList, String PatientName, String PrimaryLanguage, String Race, String LastUpdateDateTime) {
+    public PIDSegment(String AdministrativeSex, String DateOfBirth, String DeathDateTime, String DeathIndicator, String PatientAccountNumber, String PatientAddress, String PatientHealthNumber, String PatientID, String PatientIDList, String PatientName, String PrimaryLanguage, String Race, String LastUpdateTime) {
         this.AdministrativeSex = AdministrativeSex;
         this.DateOfBirth = DateOfBirth;
         this.DeathDateTime = DeathDateTime;
@@ -29,7 +29,7 @@ public class PIDSegment {
         this.PatientName = PatientName;
         this.PrimaryLanguage = PrimaryLanguage;
         this.Race = Race;
-        this.LastUpdateDateTime = LastUpdateDateTime;
+        this.LastUpdateTime = LastUpdateTime;
     }
 
     public String getPatientID() {
@@ -128,12 +128,12 @@ public class PIDSegment {
         this.DeathIndicator = DeathIndicator;
     }
 
-    public String getLastUpdateDateTime() {
-        return LastUpdateDateTime;
+    public String getLastUpdateTime() {
+        return LastUpdateTime;
     }
 
-    public void setLastUpdateDateTime(String LastUpdateDateTime) {
-        this.LastUpdateDateTime = LastUpdateDateTime;
+    public void setLastUpdateTime(String LastUpdateDateTime) {
+        this.LastUpdateTime = LastUpdateDateTime;
     }
 
 }

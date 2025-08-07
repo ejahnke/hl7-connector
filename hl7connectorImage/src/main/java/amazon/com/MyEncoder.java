@@ -135,7 +135,7 @@ public class MyEncoder {
 			json.put("PatientHealthNumber", pidSegment.getPatientHealthNumber());
 			json.put("DeathDateTime", pidSegment.getDeathDateTime());
 			json.put("DeathIndicator", pidSegment.getDeathIndicator());
-			json.put("LastUpdateDateTime", pidSegment.getLastUpdateDateTime());
+			json.put("LastUpdateTime", pidSegment.getLastUpdateTime());
 					
 			json.put("msgUrl",bucketName + "/" + keyName);
 			
