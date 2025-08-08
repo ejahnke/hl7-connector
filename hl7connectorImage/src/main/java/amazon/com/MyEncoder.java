@@ -148,6 +148,10 @@ public class MyEncoder {
 			pv1Segment.setPatientStatus(pv1[41]); //patient status
 			pv1Segment.setAdmissionDateTime(pv1[44]); //Admission Date Time
 			pv1Segment.setPrimaryCareProvider(pv1[52]); //PCP
+			
+		} catch (Exception e) {
+			System.out.println("Error ran out of PV1 segment: " + e.getMessage());
+		} finally {
 			//generate synthetic dates		
 			pv1Segment.setInitialAssessmentDateTime(generateInitialAssessmentTime(pv1Segment.getAdmissionDateTime()));		
 			pv1Segment.setRegistrationDateTime(generateRegistrationDateTime(pv1Segment.getInitialAssessmentDateTime()));
@@ -157,9 +161,7 @@ public class MyEncoder {
 			pv1Segment.setUnitTransferDateTime(generateUnitTransferDateTime(pv1Segment.getClinicalDecisionUnitDateTimeOut()));
 			pv1Segment.setLeftedDateTime(generateLeftEDDateTime(pv1Segment.getUnitTransferDateTime()));
 			pv1Segment.setDischargeDateTime(generateDischargeDateTime(pv1Segment.getLeftedDateTime()));
-		} catch (Exception e) {
-			System.out.println("Error ran out of PV1 segment: " + e.getMessage());
-		};
+		}
 
 		try {
 			
