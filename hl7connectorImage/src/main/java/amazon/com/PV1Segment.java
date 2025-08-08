@@ -1,49 +1,52 @@
 package amazon.com;
 
 public class PV1Segment {
-	
-	private String admissionType;
-	private String admissionDateTime;
-	private String initialAssessmentDateTime;
-	private String admittingProvider;
 	private String assignedPatientLocation;
+	private String admissionType;
+	private String triageLevel;
 	private String attendingProvider;
 	private String consultingProvider;
+	private String hospitalService;
+	private String admittingProvider;
+	private String patientType;
+	private String dischargeDisposition;
+	private String patientStatus;
+	private String admissionDateTime;
+	private String primaryCareProvider;
+	//generated fields below
+	private String initialAssessmentDateTime;
 	private String leftedDateTime;
 	private String dischargeDateTime;
-	private String dischargeDisposition;
-	private String primaryCareProvider;
-	private String hospitalService;
-	private String patientStatus;
-	private String patientType;
 	private String registrationDateTime;
 	private String unitTransferDateTime;
 	private String triageDateTime;
 	private String clinicalDecisionUnitDateTimeIn;
 	private String clinicalDecisionUnitDateTimeOut;
-	private String triageLevel;
+	
 
-	public PV1Segment(String admissionType, String admissionDateTime, String initialAssessmentDateTime, String admittingProvider, String assignedPatientLocation, String attendingProvider, String consultingProvider, String leftedDateTime, String dischargeDateTime, String dischargeDisposition, String primaryCareProvider, String hospitalService, String patientStatus, String patientType, String registrationDateTime, String unitTransferDateTime, String triageDateTime, String clinicalDecisionUnitDateTimeIn, String clinicalDecisionUnitDateTimeOut, String triageLevel) {
-		this.admissionType = admissionType;
-		this.admissionDateTime = admissionDateTime;
-		this.initialAssessmentDateTime = initialAssessmentDateTime;
-		this.admittingProvider = admittingProvider;
+	public PV1Segment(String assignedPatientLocation, String admissionType, String triageLevel, String attendingProvider, String consultingProvider, String hospitalService, String admittingProvider, String patientType, String dischargeDisposition, String patientStatus, String admissionDateTime, String primaryCareProvider, String initialAssessmentDateTime, String leftedDateTime, String dischargeDateTime, String registrationDateTime, String unitTransferDateTime, String triageDateTime, String clinicalDecisionUnitDateTimeIn, String clinicalDecisionUnitDateTimeOut) {
 		this.assignedPatientLocation = assignedPatientLocation;
+		this.admissionType = admissionType;
+		this.triageLevel = triageLevel;
 		this.attendingProvider = attendingProvider;
 		this.consultingProvider = consultingProvider;
+		this.hospitalService = hospitalService;
+		this.admittingProvider = admittingProvider;
+		this.patientType = patientType;
+		this.dischargeDisposition = dischargeDisposition;
+		this.patientStatus = patientStatus;
+		this.admissionDateTime = admissionDateTime;
+		this.primaryCareProvider = primaryCareProvider;
+		//genereated fields below
+		this.initialAssessmentDateTime = initialAssessmentDateTime;
 		this.leftedDateTime = leftedDateTime;
 		this.dischargeDateTime = dischargeDateTime;
-		this.dischargeDisposition = dischargeDisposition;
-		this.primaryCareProvider = primaryCareProvider;
-		this.hospitalService = hospitalService;
-		this.patientStatus = patientStatus;
-		this.patientType = patientType;
 		this.registrationDateTime = registrationDateTime;
 		this.unitTransferDateTime = unitTransferDateTime;
 		this.triageDateTime = triageDateTime;
 		this.clinicalDecisionUnitDateTimeIn = clinicalDecisionUnitDateTimeIn;
 		this.clinicalDecisionUnitDateTimeOut = clinicalDecisionUnitDateTimeOut;
-		this.triageLevel = triageLevel;
+		
 	}
 
 	public String getAdmissionType() {

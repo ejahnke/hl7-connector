@@ -1,5 +1,6 @@
 package amazon.com;
 
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,12 +8,14 @@ import java.util.UUID;
 import java.util.Random;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,6 +63,7 @@ public class MyEncoder {
 		String[] pid = null;
 		String[] evn = null;
 		String[] pv1 = null;
+		String[] pv2 = null;
 		
         for (int x=0; x<segments.length; x++) {
         	String[] segmentElements = segments[x].split("\\|", -1);
@@ -77,83 +81,100 @@ public class MyEncoder {
 				evn = segmentElements;
 			} if (segmentElements[0].equals("PV1")) {
 				pv1 = segmentElements;
+			} if (segmentElements[0].equals("PV2")) {
+				pv2 = segmentElements;
 			} 
         }
-        
-        MSHSegment mshSegment = new MSHSegment(
-        		msh[1],
-        		msh[2],
-        		msh[3],
-        		msh[4],
-        		msh[5],
-        		msh[6],
-        		msh[7],
-        		msh[8],
-        		msh[9],
-        		msh[10],
-        		msh[11]
-        );
+		MSHSegment mshSegment = new MSHSegment("","","","","","","","","","","");
+		PIDSegment pidSegment = new PIDSegment("","","","","","","","","","","","","");
+		EVNSegment evnSegment = new EVNSegment("","","");
+		PV1Segment pv1Segment = new PV1Segment("","","","","","","","","","",getToday(),"","","","","","","","","");
+		PV2Segment pv2Segment = new PV2Segment("","");
 
-		PIDSegment pidSegment = new PIDSegment(
-				pid[8],
-				pid[7],
-				pid[29],
-				pid[30],
-				pid[18],
-				pid[11],
-				pid[19],
-				pid[2],
-				pid[3],
-				pid[5],
-				pid[15],
-				pid[10],
-				pid[33]
-		);
+        try {
+			mshSegment.setEncodingCharacters(msh[1]);
+			mshSegment.setSendingApplication(msh[2]);
+			mshSegment.setSendingFacility(msh[3]);
+			mshSegment.setReceivingApplication(msh[4]);
+			mshSegment.setReceivingFacility(msh[5]);
+			mshSegment.setDateTimeOfMessage(msh[6]);
+			mshSegment.setSecurity(msh[7]);		
+			mshSegment.setMessageType(msh[8]);
+			mshSegment.setMessageControlId(msh[9]);	
+			mshSegment.setProcessingId(msh[10]);
+			mshSegment.setVersionId(msh[11]);
+		} catch (Exception e) {
+			System.out.println("Error ran out of MSH segment: " + e.getMessage());
+		};
 
-		EVNSegment evnSegment = new EVNSegment(
-				evn[2],
-				evn[1],
-				evn[5]
-		);
-	// generated data should be captured as burden on producers (powerpoint)
-		PV1Segment pv1Segment = new PV1Segment(
-				pv1[4], //admissionType
-				pv1[44], //Admission Date Time
-				"", //Initiatl assessment Time
-				pv1[17], //admit provider
-				pv1[3], //assigned location
-				pv1[7], //attending provider
-				pv1[9], //consulting provider
-				"", //left ED date time
-				"", //dischargeDateTime
-				pv1[36], // discharge disposition
-				pv1[52], //PCP
-				pv1[10], //hospital service
-				pv1[41], //patient status
-				pv1[18], //patient type
-				"", //reg date
-				"", //unit transf date
-				"", //triage datetime
-				"", //clinical dec unit in
-				"", // cli dec unit out
-				pv1[4] //triage level
-		);
-       
-	   	//generate synthetic dates
-		
-		pv1Segment.setInitialAssessmentDateTime(generateInitialAssessmentTime(pv1Segment.getAdmissionDateTime()));		
-		pv1Segment.setRegistrationDateTime(generateRegistrationDateTime(pv1Segment.getInitialAssessmentDateTime()));
-		pv1Segment.setTriageDateTime(generateTriageDateTime(pv1Segment.getRegistrationDateTime()));
-		pv1Segment.setClinicalDecisionUnitDateTimeIn(pv1Segment.getTriageDateTime());
-		pv1Segment.setClinicalDecisionUnitDateTimeOut(generateClinicalDecisionUnitDateTimeOut(pv1Segment.getClinicalDecisionUnitDateTimeIn()));
-		pv1Segment.setUnitTransferDateTime(generateUnitTransferDateTime(pv1Segment.getClinicalDecisionUnitDateTimeOut()));
-		pv1Segment.setLeftedDateTime(generateLeftEDDateTime(pv1Segment.getUnitTransferDateTime()));
-		pv1Segment.setDischargeDateTime(generateDischargeDateTime(pv1Segment.getLeftedDateTime()));
+		try {
+			pidSegment.setPatientID(pid[2]);
+			pidSegment.setPatientIDList(pid[3]);
+			pidSegment.setPatientName(pid[5]);
+			pidSegment.setDateOfBirth(pid[7]);
+			pidSegment.setAdministrativeSex(pid[8]);
+			pidSegment.setRace(pid[10]);
+			pidSegment.setPatientAddress(pid[11]);
+			pidSegment.setPrimaryLanguage(pid[15]);
+			pidSegment.setPatientAccountNumber(pid[18]);
+			pidSegment.setPatientHealthNumber(pid[19]);
+			pidSegment.setDeathDateTime(pid[29]);
+			pidSegment.setDeathIndicator(pid[30]);
+			pidSegment.setLastUpdateTime(pid[33]);
+
+		} catch (Exception e) {
+			System.out.println("Error ran out of PID segment: " + e.getMessage());
+		};
+
+		try {
+			evnSegment.setEventTypeCode(evn[1]);
+			evnSegment.setEventDateTime(evn[2]);
+			evnSegment.setOperatorId(evn[5]);
+		} catch (Exception e) {
+			System.out.println("Error ran out of EVN segment: " + e.getMessage());
+		};
+
+		try {
+		// generated data should be captured as burden on producers (powerpoint)
+			pv1Segment.setAssignedPatientLocation(pv1[3]); //assigned location
+			pv1Segment.setAdmissionType(pv1[4]); //admissionType
+			pv1Segment.setTriageLevel(pv1[4]); //triage level
+			pv1Segment.setAttendingProvider(pv1[7]); //attending provider
+			pv1Segment.setConsultingProvider(pv1[9]); //consulting provider
+			pv1Segment.setHospitalService(pv1[10]); //hospital service
+			pv1Segment.setAdmittingProvider(pv1[17]); //admit provider
+			pv1Segment.setPatientType(pv1[18]); //patient type
+			pv1Segment.setDischargeDisposition(pv1[36]); // discharge disposition
+			pv1Segment.setPatientStatus(pv1[41]); //patient status
+			pv1Segment.setAdmissionDateTime(pv1[44]); //Admission Date Time
+			pv1Segment.setPrimaryCareProvider(pv1[52]); //PCP
+			//generate synthetic dates		
+			pv1Segment.setInitialAssessmentDateTime(generateInitialAssessmentTime(pv1Segment.getAdmissionDateTime()));		
+			pv1Segment.setRegistrationDateTime(generateRegistrationDateTime(pv1Segment.getInitialAssessmentDateTime()));
+			pv1Segment.setTriageDateTime(generateTriageDateTime(pv1Segment.getRegistrationDateTime()));
+			pv1Segment.setClinicalDecisionUnitDateTimeIn(pv1Segment.getTriageDateTime());
+			pv1Segment.setClinicalDecisionUnitDateTimeOut(generateClinicalDecisionUnitDateTimeOut(pv1Segment.getClinicalDecisionUnitDateTimeIn()));
+			pv1Segment.setUnitTransferDateTime(generateUnitTransferDateTime(pv1Segment.getClinicalDecisionUnitDateTimeOut()));
+			pv1Segment.setLeftedDateTime(generateLeftEDDateTime(pv1Segment.getUnitTransferDateTime()));
+			pv1Segment.setDischargeDateTime(generateDischargeDateTime(pv1Segment.getLeftedDateTime()));
+		} catch (Exception e) {
+			System.out.println("Error ran out of PV1 segment: " + e.getMessage());
+		};
+
+		try {
+			
+			pv2Segment.setAdmitReason(pv2[3]);
+			pv2Segment.setModeOfArrivalCode(pv2[38]);
+			
+		} catch (Exception e) {
+		};
+	   	
         
         String message;
 		JSONObject json = new JSONObject();
 		
 		try {
+			//MSH
 			json.put("EncodingCharacters", mshSegment.getEncodingCharacters() );
 			json.put("SendingApplication", mshSegment.getSendingApplication() );
 			json.put("SendingFacility", mshSegment.getSendingFacility() );
@@ -165,7 +186,11 @@ public class MyEncoder {
 			json.put("MessageControlId",mshSegment.getMessageControlId()  );
 			json.put("ProcessingId", mshSegment.getProcessingId() );
 			json.put("VersionId", mshSegment.getVersionId() );
+			json.put("SendingFacilityTerritory","ON");
+			json.put("SendingFacilityAmbNumber",mshSegment.getSendingFacility());
+			json.put("AbstractId",mshSegment.getProcessingId());
 
+			//PID
 			json.put("PatientID", pidSegment.getPatientID());
 			json.put("PatientIDList", pidSegment.getPatientIDList());
 			json.put("PatientName", pidSegment.getPatientName());
@@ -209,7 +234,9 @@ public class MyEncoder {
 
 			json.put("CoderNumber", evnSegment.getOperatorId());
 
-			//PV1
+			//PV2
+			json.put("ReasonForVisit", pv2Segment.getAdmitReason());
+			json.put("ModeOfArrivalCode", pv2Segment.getModeOfArrivalCode());
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -242,6 +269,16 @@ public class MyEncoder {
         }
 
         return "";
+    }
+
+	private static String getToday() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateTimeFormatter inboundFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+        LocalDateTime dateTime = LocalDateTime.parse(LocalDateTime.now().toString(), inboundFormatter);
+        Random random = new Random();
+        int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
+        LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
+        return newDateTime.format(formatter);
     }
 
     private String generateInitialAssessmentTime(String inputDateTime) {

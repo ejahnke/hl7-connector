@@ -63,5 +63,49 @@ public class MSHSegment {
 	public String getVersionId() {
 		return VersionId;
 	}
+
+    public void setEncodingCharacters(String EncodingCharacters) {
+        this.EncodingCharacters = EncodingCharacters;
+    }
+
+    public void setSendingApplication(String SendingApplication) {
+        this.SendingApplication = SendingApplication;
+    }
+
+    public void setSendingFacility(String SendingFacility) {
+        this.SendingFacility = SendingFacility;
+    }
+
+    public void setReceivingApplication(String ReceivingApplication) {
+        this.ReceivingApplication = ReceivingApplication;
+    }
+
+    public void setReceivingFacility(String ReceivingFacility) {
+        this.ReceivingFacility = ReceivingFacility;
+    }
+
+    public void setDateTimeOfMessage(String DateTimeOfMessage) {
+        this.DateTimeOfMessage = DateTimeOfMessage;
+    }
+
+    public void setSecurity(String Security) {
+        this.Security = Security;
+    }
+
+    public void setMessageType(String MessageType) {
+        this.MessageType = MessageType;
+    }
+
+    public void setMessageControlId(String MessageControlId) {
+        this.MessageControlId = MessageControlId;
+    }
+
+    public void setProcessingId(String ProcessingId) {
+        this.ProcessingId = ProcessingId;
+    }
+
+    public void setVersionId(String VersionId) {
+        this.VersionId = VersionId;
+    }
 }
 	

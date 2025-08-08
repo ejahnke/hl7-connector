@@ -6,7 +6,7 @@ public class EVNSegment {
     private String EventDateTime;
     private String OperatorId;
 
-    public EVNSegment(String EventDateTime, String EventTypeCode, String OperatorId) {
+    public EVNSegment(String EventTypeCode, String EventDateTime, String OperatorId) {
         this.EventDateTime = EventDateTime;
         this.EventTypeCode = EventTypeCode;
         this.OperatorId = OperatorId;

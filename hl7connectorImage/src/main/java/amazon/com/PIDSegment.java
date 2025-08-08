@@ -16,7 +16,7 @@ public class PIDSegment {
     private String DeathIndicator;
     private String LastUpdateTime;
 
-    public PIDSegment(String AdministrativeSex, String DateOfBirth, String DeathDateTime, String DeathIndicator, String PatientAccountNumber, String PatientAddress, String PatientHealthNumber, String PatientID, String PatientIDList, String PatientName, String PrimaryLanguage, String Race, String LastUpdateTime) {
+    public PIDSegment(String PatientID, String PatientIDList, String PatientName, String DateOfBirth, String AdministrativeSex, String Race, String PatientAddress, String PrimaryLanguage, String PatientAccountNumber, String PatientHealthNumber, String DeathDateTime, String DeathIndicator, String LastUpdateTime) {
         this.AdministrativeSex = AdministrativeSex;
         this.DateOfBirth = DateOfBirth;
         this.DeathDateTime = DeathDateTime;
