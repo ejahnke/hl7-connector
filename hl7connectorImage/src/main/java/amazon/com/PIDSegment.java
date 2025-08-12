@@ -93,7 +93,10 @@ public class PIDSegment {
     }
 
     public void setPrimaryLanguage(String PrimaryLanguage) {
-        this.PrimaryLanguage = PrimaryLanguage;
+        if (PrimaryLanguage.length() > 0) {
+            this.PrimaryLanguage = PrimaryLanguage;
+        } else this.PrimaryLanguage = MyEncoder.getRandomLanguage();
+        
     }
 
     public String getPatientAccountNumber() {
@@ -124,8 +127,10 @@ public class PIDSegment {
         return DeathIndicator;
     }
 
-    public void setDeathIndicator(String DeathIndicator) {
-        this.DeathIndicator = DeathIndicator;
+    public void setDeathIndicator(String DeathDateTime) {
+        if (DeathDateTime.length() > 0) {
+            this.DeathIndicator = "Y";
+        } else this.DeathIndicator = "";
     }
 
     public String getLastUpdateTime() {

@@ -62,7 +62,9 @@ public class PV1Segment {
 	}
 
 	public void setAdmissionDateTime(String admissionDateTime) {
-		this.admissionDateTime = admissionDateTime;
+		if (admissionDateTime.length() > 0) 
+			this.admissionDateTime = admissionDateTime ;
+		else this.admissionDateTime = MyEncoder.getToday();
 	}
 
 	public String getInitialAssessmentDateTime() {

@@ -64,6 +64,7 @@ public class MyEncoder {
 		String[] evn = null;
 		String[] pv1 = null;
 		String[] pv2 = null;
+		String[] dg1 = null;
 		
         for (int x=0; x<segments.length; x++) {
         	String[] segmentElements = segments[x].split("\\|", -1);
@@ -83,6 +84,8 @@ public class MyEncoder {
 				pv1 = segmentElements;
 			} if (segmentElements[0].equals("PV2")) {
 				pv2 = segmentElements;
+			} if (segmentElements[0].equals("DG1")) {
+				dg1 = segmentElements;
 			} 
         }
 		MSHSegment mshSegment = new MSHSegment("","","","","","","","","","","");
@@ -90,6 +93,7 @@ public class MyEncoder {
 		EVNSegment evnSegment = new EVNSegment("","","");
 		PV1Segment pv1Segment = new PV1Segment("","","","","","","","","","",getToday(),"","","","","","","","","");
 		PV2Segment pv2Segment = new PV2Segment("","");
+		DG1Segment dG1Segment = new DG1Segment("");
 
         try {
 			mshSegment.setEncodingCharacters(msh[1]);
@@ -119,7 +123,7 @@ public class MyEncoder {
 			pidSegment.setPatientAccountNumber(pid[18]);
 			pidSegment.setPatientHealthNumber(pid[19]);
 			pidSegment.setDeathDateTime(pid[29]);
-			pidSegment.setDeathIndicator(pid[30]);
+			pidSegment.setDeathIndicator(pid[29]); // using death date for the death indicator initializator method.... careful PID[30]
 			pidSegment.setLastUpdateTime(pid[33]);
 
 		} catch (Exception e) {
@@ -152,7 +156,8 @@ public class MyEncoder {
 		} catch (Exception e) {
 			System.out.println("Error ran out of PV1 segment: " + e.getMessage());
 		} finally {
-			//generate synthetic dates		
+			//generate synthetic dates
+			System.out.println("Generating synthetic dates for admission date: " + pv1Segment.getAdmissionDateTime());		
 			pv1Segment.setInitialAssessmentDateTime(generateInitialAssessmentTime(pv1Segment.getAdmissionDateTime()));		
 			pv1Segment.setRegistrationDateTime(generateRegistrationDateTime(pv1Segment.getInitialAssessmentDateTime()));
 			pv1Segment.setTriageDateTime(generateTriageDateTime(pv1Segment.getRegistrationDateTime()));
@@ -169,6 +174,16 @@ public class MyEncoder {
 			pv2Segment.setModeOfArrivalCode(pv2[38]);
 			
 		} catch (Exception e) {
+			System.out.println("Error ran out of PV2 segment: " + e.getMessage());
+		};
+
+		try {
+			
+			dG1Segment.setChiefComplaint(dg1[3]);
+			
+			
+		} catch (Exception e) {
+			System.out.println("Error ran out of DG1 segment: " + e.getMessage());
 		};
 	   	
         
@@ -188,12 +203,13 @@ public class MyEncoder {
 			json.put("MessageControlId",mshSegment.getMessageControlId()  );
 			json.put("ProcessingId", mshSegment.getProcessingId() );
 			json.put("VersionId", mshSegment.getVersionId() );
-			json.put("SendingFacilityTerritory","ON");
+			//json.put("SendingFacilityTerritory","ON");
 			json.put("SendingFacilityAmbNumber",mshSegment.getSendingFacility());
-			json.put("AbstractId",mshSegment.getProcessingId());
+			json.put("AbstractId",mshSegment.getMessageControlId());
 
 			//PID
 			json.put("PatientID", pidSegment.getPatientID());
+			json.put("PatientMRN", pidSegment.getPatientID());
 			json.put("PatientIDList", pidSegment.getPatientIDList());
 			json.put("PatientName", pidSegment.getPatientName());
 			json.put("DateOfBirth", pidSegment.getDateOfBirth());
@@ -239,6 +255,9 @@ public class MyEncoder {
 			//PV2
 			json.put("ReasonForVisit", pv2Segment.getAdmitReason());
 			json.put("ModeOfArrivalCode", pv2Segment.getModeOfArrivalCode());
+
+			//DG1
+			json.put("ChiefComplaint", dG1Segment.getChiefComplaint());
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -273,7 +292,7 @@ public class MyEncoder {
         return "";
     }
 
-	private static String getToday() {
+	public static String getToday() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         DateTimeFormatter inboundFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
         LocalDateTime dateTime = LocalDateTime.parse(LocalDateTime.now().toString(), inboundFormatter);
@@ -284,12 +303,17 @@ public class MyEncoder {
     }
 
     private String generateInitialAssessmentTime(String inputDateTime) {
+		try {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         LocalDateTime dateTime = LocalDateTime.parse(inputDateTime, formatter);
         Random random = new Random();
         int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
         LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
         return newDateTime.format(formatter);
+		} catch (Exception e) {
+			System.out.println("Error generating initial assessment time: " + e.getMessage());
+			return "";
+		} // (15 to 300 minutes
     }
 
     private String generateRegistrationDateTime(String inputDateTime) {
@@ -344,6 +368,18 @@ public class MyEncoder {
         int minutesToAdd = 15 + random.nextInt(286); // 15 to 300 minutes
         LocalDateTime newDateTime = dateTime.plusMinutes(minutesToAdd);
         return newDateTime.format(formatter);
+    }
+
+    public static String getRandomLanguage() {
+        String[] languages = {"English", "French", "Spanish", "Mandarin", "Hindi", "Arabic", "Portuguese", "Bengali", "Russian", "Japanese", "Punjabi", "German", "Javanese", "Wu", "Malay"};
+        Random random = new Random();
+        int chance = random.nextInt(100);
+        
+        if (chance < 80) return "English";
+        if (chance < 85) return "French";
+        if (chance < 90) return "Spanish";
+        
+        return languages[3 + random.nextInt(12)];
     }
 
 }
